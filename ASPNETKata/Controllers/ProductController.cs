@@ -1,8 +1,13 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ASPNETKata.Models;
+using Dapper;
+using MySql.Data.MySqlClient;
 
 namespace ASPNETKata.Controllers
 {
@@ -11,7 +16,13 @@ namespace ASPNETKata.Controllers
         // GET: Product
         public ActionResult Index()
         {
-            return View();
+            var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                var list = conn.Query<Product>("Select * from Product Order by ProductID Desc");
+                return View(list);
+            }
         }
 
         // GET: Product/Details/5
@@ -30,17 +41,25 @@ namespace ASPNETKata.Controllers
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            var name = collection["Name"];
 
-                return RedirectToAction("Index");
-            }
-            catch
+            var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            using (var conn = new MySqlConnection(connectionString))
             {
-                return View();
+                conn.Open();
+
+                try
+                {
+                    conn.Execute("INSERT into Product (Name) Values (@Name)", new {Name = name});
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View();
+                }
             }
         }
+
 
         // GET: Product/Edit/5
         public ActionResult Edit(int id)
@@ -52,15 +71,22 @@ namespace ASPNETKata.Controllers
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
-            try
-            {
-                // TODO: Add update logic here
+            var name = collection["Name"];
 
-                return RedirectToAction("Index");
-            }
-            catch
+            var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            using (var conn = new MySqlConnection(connectionString))
             {
-                return View();
+                conn.Open();
+
+                try
+                {
+                    conn.Execute("Update Product Set Name = @Name WHERE ProductID =@ID", new { Name = name, ID = id });
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View();
+                }
             }
         }
 
@@ -74,15 +100,20 @@ namespace ASPNETKata.Controllers
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
-            try
+            var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            using (var conn = new MySqlConnection(connectionString))
             {
-                // TODO: Add delete logic here
+                conn.Open();
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
+                try
+                {
+                    conn.Execute("DELETE FROM Product WHERE ProductID = @ID", new { ID = id });
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View();
+                }
             }
         }
     }
