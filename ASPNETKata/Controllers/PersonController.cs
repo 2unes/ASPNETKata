@@ -21,7 +21,7 @@ namespace ASPNETKata.Controllers
             list.Add(new Person { Age = 25, IsMinor = false, Name = "Bob" });
             list.Add(new Person { Age = 17, IsMinor = true, Name = "Ted" });
 
-            return View();
+            return View(list);
         }
 
         // GET: Person/Details/5

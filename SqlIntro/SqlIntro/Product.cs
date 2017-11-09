@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace ASPNETKata.Models
+namespace SqlIntro
 {
     public class Product
     {
@@ -20,6 +17,6 @@ namespace ASPNETKata.Models
         public double StandardCost { get; set; }
         public DateTime ModifiedDate { get; set; }
         public DateTime SellStartDate { get; set; }
-
+    
     }
 }

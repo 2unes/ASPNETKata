@@ -1,28 +1,36 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using ASPNETKata.Models;
-using Dapper;
 using MySql.Data.MySqlClient;
+using Microsoft.Practices.Unity;
+using SqlIntro;
 
 namespace ASPNETKata.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly IProductRepository repo;
+
+        public ProductController(IProductRepository repo)
+        {
+            this.repo = repo;
+        }
+
         // GET: Product
         public ActionResult Index()
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-            using (var conn = new MySqlConnection(connectionString))
-            {
-                conn.Open();
-                var list = conn.Query<Product>("Select * from Product Order by ProductID Desc");
-                return View(list);
-            }
+            var list = repo.GetProducts();
+            return View(list);
+            //var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+            //using (var conn = new MySqlConnection(connectionString))
+            //{
+            //    conn.Open();
+            //    var list = conn.Query<Product>("Select * from Product Order by ProductID Desc");
+            //    return View(list);
+            //}
         }
 
         // GET: Product/Details/5
@@ -39,8 +47,20 @@ namespace ASPNETKata.Controllers
 
         // POST: Product/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Product product)
         {
+            try
+            {
+               repo.InsertProduct(product);
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+               
+                throw(e);
+            }
+           ;
+            /*
             var name = collection["Name"];
 
             var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
@@ -58,6 +78,8 @@ namespace ASPNETKata.Controllers
                     return View();
                 }
             }
+            */
+            return View();
         }
 
 
@@ -69,8 +91,21 @@ namespace ASPNETKata.Controllers
 
         // POST: Product/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Product product)
         {
+            product.ProductId = id;
+
+            try
+            {
+                repo.UpdateProduct(product);
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+
+                throw (e);
+            }
+            /*
             var name = collection["Name"];
 
             var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
@@ -88,6 +123,8 @@ namespace ASPNETKata.Controllers
                     return View();
                 }
             }
+            */
+            return View();
         }
 
         // GET: Product/Delete/5
@@ -98,8 +135,19 @@ namespace ASPNETKata.Controllers
 
         // POST: Product/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, Product product)
         {
+            try
+            {
+                repo.DeleteProduct(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+
+                throw (e);
+            }
+            /*
             var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
             using (var conn = new MySqlConnection(connectionString))
             {
@@ -115,6 +163,8 @@ namespace ASPNETKata.Controllers
                     return View();
                 }
             }
+            */
+            return View();
         }
     }
 }
