@@ -1,8 +1,7 @@
-using System;
+ using System;
 using System.Configuration;
 using System.Data;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
 using MySql.Data.MySqlClient;
 using SqlIntro;
 
