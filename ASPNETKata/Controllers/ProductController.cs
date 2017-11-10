@@ -36,7 +36,16 @@ namespace ASPNETKata.Controllers
         // GET: Product/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            try
+            {
+                var product = repo.GetDetails(id);
+                return View(product);
+            }
+            catch (Exception e)
+            {
+
+                throw (e);
+            }
         }
 
         // GET: Product/Create
@@ -79,7 +88,7 @@ namespace ASPNETKata.Controllers
                 }
             }
             */
-            return View();
+           
         }
 
 
@@ -124,7 +133,7 @@ namespace ASPNETKata.Controllers
                 }
             }
             */
-            return View();
+         
         }
 
         // GET: Product/Delete/5
@@ -164,7 +173,7 @@ namespace ASPNETKata.Controllers
                 }
             }
             */
-            return View();
+           
         }
     }
 }
